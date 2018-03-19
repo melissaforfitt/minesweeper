@@ -10,7 +10,28 @@ import javafx.stage.Stage;
 
 public class Minesweeper extends Application {
 
-	Random rand = new Random();
+	private Random rand = new Random();
+	private Rectangle r[][] = new Rectangle[10][10];
+	private Group group = new Group();
+
+	public void buildGrid() {
+
+		for (int x = 0; x < 10; x++) {
+			for (int y = 0; y < 10; y++) {
+
+				r[x][y] = new Rectangle();
+				r[x][y].setWidth(25);
+				r[x][y].setHeight(25);
+				r[x][y].setX(25 * x);
+				r[x][y].setY(25 * y);
+				r[x][y].setFill(Color.BLACK);
+				r[x][y].setStrokeWidth(1);
+				r[x][y].setStroke(Color.RED);
+				group.getChildren().addAll(r[x][y]);
+
+			}
+		}
+	}
 
 	public int setMineX() {
 
@@ -31,57 +52,48 @@ public class Minesweeper extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
-		Group group = new Group();
 		Scene scene = new Scene(group, 250, 250);
-		Rectangle r = new Rectangle();
 
-		// Create board
-		for (int y = 0; y < 10; y++) {
-			for (int x = 0; x < 10; x++) {
-
-				r.setX(25 * x);
-				r.setY(25 * y);
-				r.setWidth(25);
-				r.setHeight(25);
-				r.setFill(Color.BLACK);
-				r.setStrokeWidth(1);
-				r.setStroke(Color.RED);
-				group.getChildren().add(r);
-
-			}
-		}
+		buildGrid();
 
 		// Get computer to set mine locations
-		int[][] mines = new int[10][10];
+		int[][] mines = new int[3][3];
 		boolean[][] mine = new boolean[10][10];
 
-		for (int x = 0; x < rand.nextInt(9); x++) {
-			for (int y = 0; y < rand.nextInt(9); y++) {
+		for (int x = 0; x < 3; x++) {
+			for (int y = 0; y < 3; y++) {
 				mines[x][y] = mines[setMineX()][setMineY()];
 				mine[x][y] = true;
 			}
 		}
+		System.out.println(mines[1][1]);
 
 		// Check if user has clicked on a mine
-		r.setOnMouseClicked(event -> {
+		for (int x = 0; x < 10; x++) {
+			for (int y = 0; y < 10; y++) {
+				int i = x;
+				int j = y;
 
-			if (mine[(int) r.getX()][(int) r.getY()] = true) {
-				System.out.println("Game is over. You found a mine.");
-			} else {
-				Text text = new Text("X");
-				double a = r.getX();
-				double b = r.getY();
-				text.setX(a);
-				text.setY(b);
-				text.setFill(Color.RED);
-				//group.getChildren().add(text);
+				r[x][y].setOnMouseClicked(event -> {
+
+					if (mine[i][j] = true) {
+						Text text = new Text("X");
+						text.setFill(Color.RED);
+						group.getChildren().add(text);
+						System.out.println("Game is over. You found a mine.");
+					} else {
+						Text text = new Text("X");
+						text.setFill(Color.RED);
+						group.getChildren().addAll(text);
+					}
+				});
 			}
-		});
 
-		primaryStage.setTitle("Minesweeper");
-		primaryStage.setScene(scene);
-		primaryStage.show();
-
+			// Add everything to stage
+			primaryStage.setTitle("Minesweeper");
+			primaryStage.setScene(scene);
+			primaryStage.show();
+		}
 	}
 
 	public static void main(String[] args) {
@@ -89,5 +101,4 @@ public class Minesweeper extends Application {
 		launch(args);
 
 	}
-
 }
